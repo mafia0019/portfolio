@@ -27,7 +27,8 @@ const About: React.FC = () => {
         <div className="about-content max-w-4xl mx-auto">
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-8">
             <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-              I'm a Backend Developer with a strong passion for building efficient and scalable systems.
+              I'm a Backend Developer with expertise in building efficient and scalable systems. While my primary focus is on backend development, 
+              I also have experience in full-stack development, allowing me to understand and contribute to the entire application stack. 
               With demonstrated adaptability and a strong willingness to learn, I'm ready to work in any 
               programming language or framework required for the role.
             </p>
