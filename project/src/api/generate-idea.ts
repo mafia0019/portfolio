@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize the Gemini API client with hardcoded API key
-const genAI = new GoogleGenerativeAI('AIzaSyCBTTSwWoqot9NEbj4moRd_V-yXdW2YTOw');
+const genAI = new GoogleGenerativeAI('AIzaSyC09zFr41hdCPSnLnc227sqrnewvsFWuLc');
 
 // Function to get random elements from an array
 const getRandomElements = (arr: string[], num: number): string[] => {
@@ -138,7 +138,7 @@ ${!keywords
      Make this project distinctly different from typical solutions in these domains.` 
   : ''}`;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-001" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
