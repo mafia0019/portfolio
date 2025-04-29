@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, RefreshCw, Copy, Check, Send } from 'lucide-react';
+import { Sparkles, RefreshCw, Copy, Check, Send, Download } from 'lucide-react';
 import { generateIdea } from '../../api/generate-idea';
 
 interface ImplementationPhase {
@@ -133,6 +133,51 @@ ${generatedRoadmap.success_metrics.map(metric => `- ${metric}`).join('\n')}
     }
   };
 
+  const downloadRoadmap = () => {
+    if (generatedRoadmap) {
+      const text = `
+Project: ${generatedRoadmap.title}
+Description: ${generatedRoadmap.description}
+
+Business Value:
+${generatedRoadmap.business_value.map(value => `- ${value}`).join('\n')}
+
+Target Audience:
+${generatedRoadmap.target_audience.map(audience => `- ${audience}`).join('\n')}
+
+Implementation Phases:
+${generatedRoadmap.implementation_phases.map(phase => `
+${phase.phase} (${phase.duration})
+Deliverables:
+${phase.deliverables.map(d => `- ${d}`).join('\n')}
+Success Metrics:
+${phase.success_metrics.map(m => `- ${m}`).join('\n')}
+`).join('\n')}
+
+Key Features:
+${generatedRoadmap.key_features.map(feature => `- ${feature}`).join('\n')}
+
+Estimated Timeline: ${generatedRoadmap.estimated_timeline}
+
+Investment Areas:
+${generatedRoadmap.investment_areas.map(area => `- ${area}`).join('\n')}
+
+Success Metrics:
+${generatedRoadmap.success_metrics.map(metric => `- ${metric}`).join('\n')}
+      `;
+
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${generatedRoadmap.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_roadmap.txt`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }
+  };
+
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -189,13 +234,22 @@ ${JSON.stringify(generatedRoadmap, null, 2)}
           <h3 className="text-2xl font-bold text-gray-800 dark:text-white">
             {roadmap.title}
           </h3>
-          <button
-            onClick={copyToClipboard}
-            className="flex items-center gap-2 px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-          >
-            {copied ? <Check size={16} /> : <Copy size={16} />}
-            {copied ? 'Copied!' : 'Copy'}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={copyToClipboard}
+              className="flex items-center gap-2 px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+              {copied ? <Check size={16} /> : <Copy size={16} />}
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
+            <button
+              onClick={downloadRoadmap}
+              className="flex items-center gap-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+            >
+              <Download size={16} />
+              Download
+            </button>
+          </div>
         </div>
 
         {/* Disclaimer Section */}
@@ -294,7 +348,7 @@ ${JSON.stringify(generatedRoadmap, null, 2)}
                 <h4 className="text-lg font-bold text-yellow-800 dark:text-yellow-300 mb-2">Extended Project Timeline</h4>
                 <div className="space-y-2">
                   <p className="text-base text-yellow-700 dark:text-yellow-400">
-                    This project requires a longer implementation timeline. To ensure accurate planning and resource allocation:
+                    This project requires a longer implementation timeline of {roadmap.estimated_timeline}. To ensure accurate planning and resource allocation:
                   </p>
                   <ul className="list-disc list-inside space-y-1 text-yellow-700 dark:text-yellow-400">
                     <li>Only the first two phases are detailed above</li>
@@ -304,7 +358,7 @@ ${JSON.stringify(generatedRoadmap, null, 2)}
                   </ul>
                   <div className="mt-4 p-3 bg-yellow-100 dark:bg-yellow-800/30 rounded-md">
                     <p className="text-sm font-semibold text-yellow-800 dark:text-yellow-300">
-                      Next Steps: Contact us to schedule a project planning call
+                      Next Steps: Contact us to schedule a project planning call to discuss the {roadmap.estimated_timeline} timeline in detail
                     </p>
                   </div>
                 </div>
