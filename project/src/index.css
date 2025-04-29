@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom cursor styles */
+.custom-cursor {
+  cursor: none;
+}
+
+.custom-cursor a, 
+.custom-cursor button,
+.custom-cursor input,
+.custom-cursor textarea,
+.custom-cursor .interactive {
+  cursor: none;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Base styles */
+body {
+  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300;
+}
+
+/* Animation classes */
+.animate-spin-slow {
+  animation: spin 8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Section transitions */
+.section-transition {
+  transition: all 0.5s ease-in-out;
+}
+
+/* Typing animation styles */
+.typing-title {
+  position: relative;
+  display: inline-block;
+}
+
+.typing-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  animation: typing-blink 1s step-end infinite;
+}
+
+@keyframes typing-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Floating icons animations */
+@keyframes float {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(var(--x-offset, 20px), var(--y-offset, 20px)) rotate(var(--rotation, 45deg));
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.floating-icon {
+  will-change: transform;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  animation-play-state: running !important;
+  animation-fill-mode: both !important;
+  animation-direction: alternate !important;
+  animation-iteration-count: infinite !important;
+  animation-timing-function: ease-in-out !important;
+  pointer-events: auto !important;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  z-index: 1;
+}
+
+.floating-icon:hover {
+  z-index: 10;
+}
+
+.code-container {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.code-container::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(59, 130, 246, 0.1) 0%,
+    transparent 70%
+  );
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.code-container:hover::before {
+  width: 200%;
+  height: 200%;
+}
+
+.code-line {
+  position: relative;
+  padding: 0 1rem;
+  transition: background-color 0.3s ease;
+  z-index: 1;
+}
+
+.code-line:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
