@@ -13,14 +13,30 @@ const Navbar: React.FC = () => {
   };
 
   const handleDownloadResume = () => {
-    // In a real application, this would be a link to your actual resume file
-    const resumeUrl = '/Abhinav_Kumar_Resume.pdf';
-    const link = document.createElement('a');
-    link.href = resumeUrl;
-    link.download = 'Abhinav_Kumar_Resume.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      // Use the correct path from the public folder
+      const resumeUrl = '/Abhinav_s_resume.pdf';
+      const link = document.createElement('a');
+      link.href = resumeUrl;
+      link.download = 'Abhinav_Kumar_Resume.pdf';
+      link.target = '_blank'; // Open in new tab if download fails
+      link.rel = 'noopener noreferrer';
+      
+      // Add error handling
+      link.onerror = () => {
+        console.error('Failed to download resume');
+        // Fallback to opening in new tab
+        window.open(resumeUrl, '_blank');
+      };
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading resume:', error);
+      // Fallback to opening in new tab
+      window.open('/Abhinav_s_resume.pdf', '_blank');
+    }
   };
   
   useEffect(() => {
