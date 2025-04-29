@@ -142,11 +142,21 @@ I would like to discuss this project further and get started with the implementa
       handleRoadmapData();
     };
 
+    // Listen for the clearContactForm event
+    const handleClearForm = () => {
+      console.log('Clear form event received');
+      setForm(prev => ({ ...prev, message: '' }));
+      setHasRoadmap(false);
+      setRoadmapData(null);
+    };
+
     window.addEventListener('roadmapConnect', handleRoadmapConnect);
+    window.addEventListener('clearContactForm', handleClearForm);
 
     // Cleanup
     return () => {
       window.removeEventListener('roadmapConnect', handleRoadmapConnect);
+      window.removeEventListener('clearContactForm', handleClearForm);
     };
   }, []);
   

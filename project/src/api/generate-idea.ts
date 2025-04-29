@@ -69,6 +69,39 @@ export async function generateIdea(keywords: string) {
 Important: This project must be completely different from any previous suggestions. Combine these elements in an unexpected and innovative way.` 
       : `Generate a comprehensive project roadmap related to: ${keywords}`}. 
 
+CRITICAL REQUIREMENTS:
+1. Timeline Constraints:
+   - Each phase should be 1-2 months maximum
+   - Total phases should not exceed 3
+   - If the project naturally requires more time, add a note: "This project requires a longer timeline. Please contact us for a detailed implementation plan."
+
+2. Phase Structure:
+   - For projects under 4 months:
+     - Phase 1: Initial Setup and Core Features (1-2 months)
+     - Phase 2: Feature Enhancement and Integration (1-2 months)
+     - Phase 3: Testing and Launch (1 month)
+   - For projects over 4 months:
+     - Show only 2 detailed phases with full deliverables and metrics
+     - For phases after Phase 2, only include:
+       - Phase title
+       - Estimated duration
+       - A note: "Details to be discussed during project planning"
+     - Do not include deliverables or success metrics for phases after Phase 2
+     - Add a note: "Additional phases are tentative and will be discussed in detail during project planning"
+   - Any additional phases should be marked as "Future Enhancements" and not included in the main timeline
+
+3. For projects that naturally require more time:
+   - Show only the first 2 phases in detail with full deliverables and metrics
+   - For all subsequent phases, only include:
+     - Phase title
+     - Estimated duration
+     - A note: "Details to be discussed during project planning"
+   - Do not include deliverables or success metrics for phases after Phase 2
+   - For the estimated_timeline field, use: "Timeline to be discussed in detail during a project planning call"
+   - Add a note: "This is a high-level overview. For a detailed implementation plan and timeline tailored to your specific requirements, please contact us to get started. We recommend scheduling a 30-minute discussion to review the phases and timeline."
+   - Focus on quick wins and initial implementation
+   - Emphasize modular development approach
+
 The response must be in JSON format with the following structure:
 {
   "title": "Project Title",
@@ -96,6 +129,8 @@ Make sure the roadmap:
 - Includes measurable success metrics
 - Highlights key investment areas
 - Is realistic and achievable
+- Prioritizes shorter timelines (aim for 2-3 months when possible)
+- Breaks down complex features into smaller, manageable phases
 
 ${!keywords 
   ? `Create a groundbreaking project that uniquely combines ${randomDomains.join(' and ')} with ${randomFocuses.join(' and ')}. 
@@ -108,13 +143,19 @@ ${!keywords
     const response = await result.response;
     const text = response.text();
     
+    // Log the raw response for debugging
+    console.log('Raw API Response:', text);
+    
     // Clean up the response text to ensure it's valid JSON
     const cleanedText = text
       .replace(/```json\s*/g, '') // Remove ```json prefix
       .replace(/```\s*$/g, '')    // Remove ``` suffix
+      .replace(/^[^{]*/, '')      // Remove any text before the first {
+      .replace(/[^}]*$/, '')      // Remove any text after the last }
       .trim();
     
     try {
+      // Try to parse the cleaned text
       const roadmap = JSON.parse(cleanedText);
       
       // Validate the roadmap structure
@@ -122,14 +163,30 @@ ${!keywords
           !Array.isArray(roadmap.target_audience) || !Array.isArray(roadmap.implementation_phases) ||
           !Array.isArray(roadmap.key_features) || !roadmap.estimated_timeline ||
           !Array.isArray(roadmap.investment_areas) || !Array.isArray(roadmap.success_metrics)) {
+        console.error('Invalid roadmap structure:', roadmap);
         throw new Error('Invalid roadmap structure received from API');
       }
       
       return { roadmap, prompt };
     } catch (parseError) {
       console.error('Error parsing JSON:', parseError);
-      console.log('Raw response:', text);
-      throw new Error('Failed to parse the API response as JSON');
+      console.log('Cleaned text that failed to parse:', cleanedText);
+      
+      // Try to extract JSON from the text if it's embedded in other content
+      try {
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const extractedJson = JSON.parse(jsonMatch[0]);
+          if (extractedJson.title && extractedJson.description) {
+            console.log('Successfully extracted JSON from text');
+            return { roadmap: extractedJson, prompt };
+          }
+        }
+      } catch (extractError) {
+        console.error('Failed to extract JSON from text:', extractError);
+      }
+      
+      throw new Error('Failed to parse the API response as JSON. Please try again.');
     }
   } catch (error) {
     console.error('Error generating roadmap:', error);

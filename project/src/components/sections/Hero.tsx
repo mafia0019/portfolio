@@ -3,7 +3,7 @@ import ThreeScene from '../ThreeScene';
 import FloatingIcons from '../FloatingIcons';
 import TypingTitle from '../TypingTitle';
 import gsap from 'gsap';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Sparkles } from 'lucide-react';
 
 const Hero: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -29,6 +29,12 @@ const Hero: React.FC = () => {
         { opacity: 0, y: 30 },
         { opacity: 1, y: 0, duration: 1, delay: 1.1, ease: 'power3.out' }
       );
+
+      gsap.fromTo(
+        '.cta-button',
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 1, delay: 1.4, ease: 'power3.out' }
+      );
       
       gsap.fromTo(
         '.scroll-indicator',
@@ -43,8 +49,35 @@ const Hero: React.FC = () => {
           repeat: -1,
         }
       );
+
+      // Add hover animation for CTA button
+      const ctaButton = document.querySelector('.cta-button');
+      if (ctaButton) {
+        ctaButton.addEventListener('mouseenter', () => {
+          gsap.to(ctaButton, {
+            scale: 1.05,
+            duration: 0.3,
+            ease: 'power2.out'
+          });
+        });
+        
+        ctaButton.addEventListener('mouseleave', () => {
+          gsap.to(ctaButton, {
+            scale: 1,
+            duration: 0.3,
+            ease: 'power2.out'
+          });
+        });
+      }
     }
   }, []);
+  
+  const scrollToIdeaGenerator = () => {
+    const ideaGeneratorSection = document.getElementById('idea-generator');
+    if (ideaGeneratorSection) {
+      ideaGeneratorSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   
   return (
     <section 
@@ -65,16 +98,24 @@ const Hero: React.FC = () => {
         
         <TypingTitle titles={titles} />
         
-        <p className="hero-description max-w-2xl mx-auto text-lg text-gray-300">
+        <p className="hero-description max-w-2xl mx-auto text-lg text-gray-300 mb-8">
           A passionate developer with expertise in Python, JavaScript, and various frameworks.
           Building robust backend solutions and optimizing system performance.
         </p>
+
+        <button
+          onClick={scrollToIdeaGenerator}
+          className="cta-button inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
+        >
+          <Sparkles size={20} />
+          Generate Your Project Roadmap
+        </button>
       </div>
       
       <div className="absolute bottom-8 left-0 right-0 text-center">
         <a 
           href="#about" 
-          className="scroll-indicator inline-block text-white interactive"
+          className="scroll-indicator inline-block text-white interactive hidden md:inline-block"
         >
           <ChevronDown size={32} />
         </a>
